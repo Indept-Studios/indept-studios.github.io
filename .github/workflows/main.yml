@@ -1,14 +1,37 @@
 name: GitHub Actions Test
-on: 
-  push: 
-    branches: main
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   To-Zip:
     runs-on: ubuntu-latest
     steps:
-     - name: Zip Folder
-       run: 
-         cd../
-         zip release.zip index.html
-     - name: Release to Github
-       run: echo "Release"
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Zip Folder
+        run: |
+          zip release.zip index.html
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "v1.0.0"
+          release_name: "Release v1.0.0"
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release.zip
+          asset_name: release.zip
+          asset_content_type: application/zip
