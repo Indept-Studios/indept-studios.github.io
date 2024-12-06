@@ -1,0 +1,12 @@
+name: GitHub Actions Test
+on: 
+  push: 
+    branches: main
+jobs:
+  To-Zip:
+    runs-on: ubuntu-latest
+    steps:
+     - name: Zip Folder
+       run: zip -r release.zip index.html
+     - name: Release to Github
+       run: echo "Release"
